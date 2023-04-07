@@ -8,7 +8,9 @@ A flutter table with fixed center column list and two bi-direction tables on lef
 
 Run this command to install latest:
 
-```flutter pub add flutter_chain_table```
+```
+flutter pub add flutter_chain_table
+```
 
 # Usage
 
