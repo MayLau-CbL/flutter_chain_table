@@ -1,6 +1,6 @@
 name: flutter_chain_table
 description: A flutter table with fixed center column list and two bi-direction tables on left and right side.
-version: 1.0.0
+version: 1.0.0+1
 homepage: https://github.com/MayLau-CbL/flutter_chain_table
 
 environment:
