@@ -56,106 +56,109 @@ class _MyAppState extends State<MyApp> {
         ),
         body: ChainTable(
           verticalLinkedScroll: _verticalScrollControllerGroup,
-          leftTableHeaderColumnCount: 3,
-          rightTableHeaderColumnCount: 3,
-          leftTableFooterColumnCount: 3,
-          rightTableFooterColumnCount: 3,
-          leftTableWidth: 240,
-          rightTableWidth: 240,
+          header: HeaderInfo(
+            centerTableHeaderBuilder: (context, index) {
+              return CellWidget(
+                'Strike',
+                backgroundColor: Colors.grey.shade200,
+              );
+            },
+            leftTableHeaderBuilder: (context, index) {
+              switch (index) {
+                case 0:
+                  {
+                    return const CellWidget(
+                      'Last',
+                    );
+                  }
+                case 1:
+                  {
+                    return const CellWidget(
+                      'Ask',
+                    );
+                  }
+
+                default:
+                  {
+                    return const CellWidget(
+                      'Bid',
+                    );
+                  }
+              }
+            },
+            rightTableHeaderBuilder: (context, index) {
+              switch (index) {
+                case 0:
+                  {
+                    return const CellWidget('Bid');
+                  }
+                case 1:
+                  {
+                    return const CellWidget('Ask');
+                  }
+                default:
+                  {
+                    return const CellWidget('Last');
+                  }
+              }
+            },
+            leftTableHeaderColumnCount: 3,
+            rightTableHeaderColumnCount: 3,
+          ),
+          footer: FooterInfo(
+            centerTableFooterBuilder: (context, index) {
+              return CellWidget(
+                'Strike',
+                backgroundColor: Colors.grey.shade200,
+              );
+            },
+            leftTableFooterBuilder: (context, index) {
+              switch (index) {
+                case 0:
+                  {
+                    return const CellWidget(
+                      'Last',
+                    );
+                  }
+                case 1:
+                  {
+                    return const CellWidget(
+                      'Ask',
+                    );
+                  }
+
+                default:
+                  {
+                    return const CellWidget(
+                      'Bid',
+                    );
+                  }
+              }
+            },
+            rightTableFooterBuilder: (context, index) {
+              switch (index) {
+                case 0:
+                  {
+                    return const CellWidget('Bid');
+                  }
+                case 1:
+                  {
+                    return const CellWidget('Ask');
+                  }
+                default:
+                  {
+                    return const CellWidget('Last');
+                  }
+              }
+            },
+            leftTableFooterColumnCount: 3,
+            rightTableFooterColumnCount: 3,
+          ),
+          sideTableWidth: 240,
           centerColumnWidth: 80,
           leftTableColumnCount: 3,
           rightTableColumnCount: 3,
           tableRowCount: 50,
-          centerTableFooterBuilder: (context, index) {
-            return CellWidget(
-              'Strike',
-              backgroundColor: Colors.grey.shade200,
-            );
-          },
-          leftTableFooterBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                {
-                  return const CellWidget(
-                    'Last',
-                  );
-                }
-              case 1:
-                {
-                  return const CellWidget(
-                    'Ask',
-                  );
-                }
-
-              default:
-                {
-                  return const CellWidget(
-                    'Bid',
-                  );
-                }
-            }
-          },
-          rightTableFooterBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                {
-                  return const CellWidget('Bid');
-                }
-              case 1:
-                {
-                  return const CellWidget('Ask');
-                }
-              default:
-                {
-                  return const CellWidget('Last');
-                }
-            }
-          },
-          centerTableHeaderBuilder: (context, index) {
-            return CellWidget(
-              'Strike',
-              backgroundColor: Colors.grey.shade200,
-            );
-          },
-          leftTableHeaderBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                {
-                  return const CellWidget(
-                    'Last',
-                  );
-                }
-              case 1:
-                {
-                  return const CellWidget(
-                    'Ask',
-                  );
-                }
-
-              default:
-                {
-                  return const CellWidget(
-                    'Bid',
-                  );
-                }
-            }
-          },
-          rightTableHeaderBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                {
-                  return const CellWidget('Bid');
-                }
-              case 1:
-                {
-                  return const CellWidget('Ask');
-                }
-              default:
-                {
-                  return const CellWidget('Last');
-                }
-            }
-          },
           leftBuilder: (context, rowIndex, colIndex) {
             Color color = _testList[rowIndex]['strike'] < _price
                 ? Colors.lightBlue.shade100

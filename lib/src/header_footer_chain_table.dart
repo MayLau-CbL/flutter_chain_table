@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chain_table/src/base_chain_table.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
+import 'base_chain_table.dart';
+import 'model/footer_info.dart';
+import 'model/header_info.dart';
 import 'side_table.dart';
 
 class HeaderFooterChainTable extends StatefulWidget {
-  final IndexedWidgetBuilder? leftTableHeaderBuilder,
-      rightTableHeaderBuilder,
-      centerTableHeaderBuilder;
+  final HeaderInfo? headerInfo;
 
-  final int leftTableHeaderColumnCount,
-      rightTableHeaderColumnCount,
-      centerTableHeaderColumnCount = 1;
-
-  final IndexedWidgetBuilder? leftTableFooterBuilder,
-      rightTableFooterBuilder,
-      centerTableFooterBuilder;
-
-  final int leftTableFooterColumnCount,
-      rightTableFooterColumnCount,
-      centerTableFooterColumnCount = 1;
+  final FooterInfo? footerInfo;
 
   final double leftTableWidth, rightTableWidth, centerColumnWidth;
   final int leftTableColumnCount, rightTableColumnCount;
@@ -47,16 +37,8 @@ class HeaderFooterChainTable extends StatefulWidget {
     required this.leftBuilder,
     required this.rightBuilder,
     required this.centerBuilder,
-    this.leftTableHeaderBuilder,
-    this.rightTableHeaderBuilder,
-    this.centerTableHeaderBuilder,
-    this.leftTableHeaderColumnCount = 0,
-    this.rightTableHeaderColumnCount = 0,
-    this.leftTableFooterBuilder,
-    this.rightTableFooterBuilder,
-    this.centerTableFooterBuilder,
-    this.leftTableFooterColumnCount = 0,
-    this.rightTableFooterColumnCount = 0,
+    this.headerInfo,
+    this.footerInfo,
     required this.horizontalLinkedScroll,
     required this.verticalLinkedScroll,
   });
@@ -81,9 +63,7 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
   }
 
   void _initHorizontalScrollHeaderControllers() {
-    bool hasHeader = widget.leftTableHeaderBuilder != null &&
-        widget.centerTableHeaderBuilder != null &&
-        widget.rightTableHeaderBuilder != null;
+    bool hasHeader = widget.headerInfo != null;
     if (hasHeader) {
       _horizontalLeftHeaderScollController =
           widget.horizontalLinkedScroll.addAndGet();
@@ -93,9 +73,7 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
   }
 
   void _initHorizontalScrollFooterControllers() {
-    bool hasFooter = widget.leftTableFooterBuilder != null &&
-        widget.centerTableFooterBuilder != null &&
-        widget.rightTableFooterBuilder != null;
+    bool hasFooter = widget.footerInfo != null;
     if (hasFooter) {
       _horizontalLeftFooterScollController =
           widget.horizontalLinkedScroll.addAndGet();
@@ -132,7 +110,7 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
             tableRowCount: widget.tableRowCount,
           ),
         ),
-        if (widget.leftTableHeaderBuilder != null)
+        if (widget.headerInfo?.leftTableHeaderBuilder != null)
           LayoutId(
             id: TableComponents.leftHeader,
             child: SizedBox(
@@ -142,28 +120,30 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
                 controller: _horizontalLeftHeaderScollController,
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children:
-                      List.generate(widget.leftTableHeaderColumnCount, (index) {
-                    return widget.leftTableHeaderBuilder!.call(context, index);
+                  children: List.generate(
+                      widget.headerInfo!.leftTableHeaderColumnCount, (index) {
+                    return widget.headerInfo!.leftTableHeaderBuilder
+                        .call(context, index);
                   }),
                 ),
               ),
             ),
           ),
-        if (widget.centerTableHeaderBuilder != null)
+        if (widget.headerInfo?.centerTableHeaderBuilder != null)
           LayoutId(
             id: TableComponents.centerHeader,
             child: SizedBox(
               width: widget.centerColumnWidth,
               child: Row(
-                children:
-                    List.generate(widget.centerTableHeaderColumnCount, (index) {
-                  return widget.centerTableHeaderBuilder!.call(context, index);
+                children: List.generate(
+                    widget.headerInfo!.centerTableHeaderColumnCount, (index) {
+                  return widget.headerInfo!.centerTableHeaderBuilder
+                      .call(context, index);
                 }),
               ),
             ),
           ),
-        if (widget.rightTableHeaderBuilder != null)
+        if (widget.headerInfo?.rightTableHeaderBuilder != null)
           LayoutId(
             id: TableComponents.rightHeader,
             child: SizedBox(
@@ -172,15 +152,16 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
                 controller: _horizontalRightHeaderScollController,
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(widget.rightTableHeaderColumnCount,
-                      (index) {
-                    return widget.rightTableHeaderBuilder!.call(context, index);
+                  children: List.generate(
+                      widget.headerInfo!.rightTableHeaderColumnCount, (index) {
+                    return widget.headerInfo!.rightTableHeaderBuilder
+                        .call(context, index);
                   }),
                 ),
               ),
             ),
           ),
-        if (widget.leftTableFooterBuilder != null)
+        if (widget.footerInfo?.leftTableFooterBuilder != null)
           LayoutId(
             id: TableComponents.leftFooter,
             child: SizedBox(
@@ -190,28 +171,30 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
                 reverse: true,
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children:
-                      List.generate(widget.leftTableFooterColumnCount, (index) {
-                    return widget.leftTableFooterBuilder!.call(context, index);
+                  children: List.generate(
+                      widget.footerInfo!.leftTableFooterColumnCount, (index) {
+                    return widget.footerInfo!.leftTableFooterBuilder
+                        .call(context, index);
                   }),
                 ),
               ),
             ),
           ),
-        if (widget.centerTableFooterBuilder != null)
+        if (widget.footerInfo?.centerTableFooterBuilder != null)
           LayoutId(
             id: TableComponents.centerFooter,
             child: SizedBox(
               width: widget.centerColumnWidth,
               child: Row(
-                children:
-                    List.generate(widget.centerTableFooterColumnCount, (index) {
-                  return widget.centerTableFooterBuilder!.call(context, index);
+                children: List.generate(
+                    widget.footerInfo!.centerTableFooterColumnCount, (index) {
+                  return widget.footerInfo!.centerTableFooterBuilder
+                      .call(context, index);
                 }),
               ),
             ),
           ),
-        if (widget.rightTableFooterBuilder != null)
+        if (widget.footerInfo?.rightTableFooterBuilder != null)
           LayoutId(
             id: TableComponents.rightFooter,
             child: SizedBox(
@@ -220,9 +203,10 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
                 controller: _horizontalRightFooterScollController,
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(widget.rightTableFooterColumnCount,
-                      (index) {
-                    return widget.rightTableFooterBuilder!.call(context, index);
+                  children: List.generate(
+                      widget.footerInfo!.rightTableFooterColumnCount, (index) {
+                    return widget.footerInfo!.rightTableFooterBuilder
+                        .call(context, index);
                   }),
                 ),
               ),

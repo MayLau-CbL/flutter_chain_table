@@ -1,53 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chain_table/src/header_footer_chain_table.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
+import 'header_footer_chain_table.dart';
+import 'model/footer_info.dart';
+import 'model/header_info.dart';
 import 'side_table.dart';
 
 class ChainTable extends StatefulWidget {
-  ///Header
-  final IndexedWidgetBuilder? leftTableHeaderBuilder,
-      rightTableHeaderBuilder,
-      centerTableHeaderBuilder;
-  final int leftTableHeaderColumnCount,
-      rightTableHeaderColumnCount,
-      centerTableHeaderColumnCount = 1;
+  /// Header information of the table. No header will be shown when [header] is null.
+  final HeaderInfo? header;
 
-  ///Footer
-  final IndexedWidgetBuilder? leftTableFooterBuilder,
-      rightTableFooterBuilder,
-      centerTableFooterBuilder;
-  final int leftTableFooterColumnCount,
-      rightTableFooterColumnCount,
-      centerTableFooterColumnCount = 1;
+  /// Footer information of the table. No header will be shown when [footer] is null.
+  final FooterInfo? footer;
 
-  ///Body
-  final double leftTableWidth, rightTableWidth, centerColumnWidth;
+  /// Left and right table width. Width must > 0.
+  final double sideTableWidth;
+
+  /// Center fixed column width. Width must > 0.
+  final double centerColumnWidth;
+
+  /// Number of column in left and right table.
   final int leftTableColumnCount, rightTableColumnCount;
+
+  /// Number of table row.
   final int tableRowCount;
 
-  /// Table Cell Builder
+  /// Table cell builder.
   final TableWidgetBuilder leftBuilder, rightBuilder;
+
+  /// Center fixed column cell builder.
   final IndexedWidgetBuilder centerBuilder;
 
-  /// ScrollController
+  /// Left and right parts including header, footer and table body horizontal scoll controller group. Using google's [linked_scroll_controller] to synchonize the scroll event. Detail may ref to [LinkedScrollControllerGroup].
   final LinkedScrollControllerGroup? horizontalLinkedScroll;
+
+  /// Left and right table and center fixed column vertial scoll controller group. Using google's [linked_scroll_controller] to synchonize the scroll event. Detail may ref to [LinkedScrollControllerGroup].
   final LinkedScrollControllerGroup? verticalLinkedScroll;
 
   const ChainTable({
     super.key,
-    this.leftTableHeaderBuilder,
-    this.rightTableHeaderBuilder,
-    this.centerTableHeaderBuilder,
-    this.leftTableHeaderColumnCount = 0,
-    this.rightTableHeaderColumnCount = 0,
-    this.leftTableFooterBuilder,
-    this.rightTableFooterBuilder,
-    this.centerTableFooterBuilder,
-    this.leftTableFooterColumnCount = 0,
-    this.rightTableFooterColumnCount = 0,
-    required this.leftTableWidth,
-    required this.rightTableWidth,
+
+    ///Header
+    this.header,
+
+    ///Footer
+    this.footer,
+
+    ///Body
+    required this.sideTableWidth,
     required this.centerColumnWidth,
     required this.leftTableColumnCount,
     required this.rightTableColumnCount,
@@ -55,9 +55,18 @@ class ChainTable extends StatefulWidget {
     required this.leftBuilder,
     required this.rightBuilder,
     required this.centerBuilder,
+
+    ///Scroll Control
     this.horizontalLinkedScroll,
     this.verticalLinkedScroll,
-  });
+  })  : assert((sideTableWidth > 0),
+            "Left and right table width must greater than ZERO"),
+        assert((centerColumnWidth > 0),
+            "Center table width must greater than ZERO"),
+        assert((leftTableColumnCount > 0),
+            "Left table column count must greater than ZERO"),
+        assert((rightTableColumnCount > 0),
+            "Right table column count must greater than ZERO");
 
   @override
   State<ChainTable> createState() => _ChainTableState();
@@ -80,10 +89,12 @@ class _ChainTableState extends State<ChainTable> {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraint) {
       return HeaderFooterChainTable(
+        headerInfo: widget.header,
+        footerInfo: widget.footer,
         widgetHeight: constraint.maxHeight,
         widgetWidth: constraint.maxWidth,
-        leftTableWidth: widget.leftTableWidth,
-        rightTableWidth: widget.rightTableWidth,
+        leftTableWidth: widget.sideTableWidth,
+        rightTableWidth: widget.sideTableWidth,
         centerColumnWidth: widget.centerColumnWidth,
         leftTableColumnCount: widget.leftTableColumnCount,
         rightTableColumnCount: widget.rightTableColumnCount,
@@ -93,16 +104,6 @@ class _ChainTableState extends State<ChainTable> {
         centerBuilder: widget.centerBuilder,
         horizontalLinkedScroll: _horizontalLinkedScroll,
         verticalLinkedScroll: _verticalLinkedScroll,
-        leftTableHeaderBuilder: widget.leftTableHeaderBuilder,
-        rightTableHeaderBuilder: widget.rightTableHeaderBuilder,
-        centerTableHeaderBuilder: widget.centerTableHeaderBuilder,
-        leftTableHeaderColumnCount: widget.leftTableHeaderColumnCount,
-        rightTableHeaderColumnCount: widget.rightTableHeaderColumnCount,
-        leftTableFooterBuilder: widget.leftTableFooterBuilder,
-        rightTableFooterBuilder: widget.rightTableFooterBuilder,
-        centerTableFooterBuilder: widget.centerTableFooterBuilder,
-        leftTableFooterColumnCount: widget.leftTableFooterColumnCount,
-        rightTableFooterColumnCount: widget.rightTableFooterColumnCount,
       );
     });
   }
