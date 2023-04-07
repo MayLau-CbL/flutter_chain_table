@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
   late List _testList;
   final int _price = 115;
 
-  LinkedScrollControllerGroup _verticalScrollControllerGroup =
+  final LinkedScrollControllerGroup _verticalScrollControllerGroup =
       LinkedScrollControllerGroup();
 
   @override
