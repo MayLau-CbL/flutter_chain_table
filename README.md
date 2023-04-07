@@ -35,7 +35,7 @@ const ChainTable({
 
 Demo of the example project:
 
-![](demo.gif)
+![](https://raw.githubusercontent.com/MayLau-CbL/flutter_chain_table/main/demo.gif)
 
 ## License
 
