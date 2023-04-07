@@ -5,7 +5,8 @@ import 'side_table.dart';
 
 class BaseChainTable extends StatefulWidget {
   /// table horizontal width
-  final double leftTableWidth, rightTableWidth;
+  final double leftTableWidth, rightTableWidth, centerColumnWidth;
+  final double widgetWidth;
 
   final int leftTableColumnCount, rightTableColumnCount;
   final int tableRowCount;
@@ -19,8 +20,10 @@ class BaseChainTable extends StatefulWidget {
 
   const BaseChainTable({
     super.key,
+    required this.widgetWidth,
     required this.leftTableWidth,
     required this.rightTableWidth,
+    required this.centerColumnWidth,
     required this.leftTableColumnCount,
     required this.rightTableColumnCount,
     required this.leftBuilder,
@@ -64,28 +67,40 @@ class _BaseChainTableState extends State<BaseChainTable> {
 
   @override
   Widget build(BuildContext context) {
+    double sideTableWidth = (widget.widgetWidth - widget.centerColumnWidth) / 2;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SideTable(
-          reverse: true,
-          verticalScrollController: _verticalLeftScollController,
-          horizontalScrollController: _horizontalLeftScollController,
-          tableColumnCount: widget.leftTableColumnCount,
-          tableRowCount: widget.tableRowCount,
-          tableWidgetBuilder: widget.leftBuilder,
+        SizedBox(
+          width: sideTableWidth,
+          child: SideTable(
+            tableWidth: widget.leftTableWidth,
+            reverse: true,
+            verticalScrollController: _verticalLeftScollController,
+            horizontalScrollController: _horizontalLeftScollController,
+            tableColumnCount: widget.leftTableColumnCount,
+            tableRowCount: widget.tableRowCount,
+            tableWidgetBuilder: widget.leftBuilder,
+          ),
         ),
-        ListView.builder(
-          itemCount: widget.tableRowCount,
-          controller: _verticalCenterScollController,
-          itemBuilder: widget.centerBuilder,
+        SizedBox(
+          width: widget.centerColumnWidth,
+          child: ListView.builder(
+            itemCount: widget.tableRowCount,
+            controller: _verticalCenterScollController,
+            itemBuilder: widget.centerBuilder,
+          ),
         ),
-        SideTable(
-          verticalScrollController: _verticalRightScollController,
-          horizontalScrollController: _horizontalRightScollController,
-          tableColumnCount: widget.rightTableColumnCount,
-          tableRowCount: widget.tableRowCount,
-          tableWidgetBuilder: widget.rightBuilder,
+        SizedBox(
+          width: sideTableWidth,
+          child: SideTable(
+            tableWidth: widget.rightTableWidth,
+            verticalScrollController: _verticalRightScollController,
+            horizontalScrollController: _horizontalRightScollController,
+            tableColumnCount: widget.rightTableColumnCount,
+            tableRowCount: widget.tableRowCount,
+            tableWidgetBuilder: widget.rightBuilder,
+          ),
         ),
       ],
     );

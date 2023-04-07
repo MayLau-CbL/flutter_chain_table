@@ -16,11 +16,12 @@ class HeaderFooterChainTable extends StatefulWidget {
   final IndexedWidgetBuilder? leftTableFooterBuilder,
       rightTableFooterBuilder,
       centerTableFooterBuilder;
+
   final int leftTableFooterColumnCount,
       rightTableFooterColumnCount,
       centerTableFooterColumnCount = 1;
 
-  final double leftTableWidth, rightTableWidth;
+  final double leftTableWidth, rightTableWidth, centerColumnWidth;
   final int leftTableColumnCount, rightTableColumnCount;
   final int tableRowCount;
 
@@ -39,6 +40,7 @@ class HeaderFooterChainTable extends StatefulWidget {
     required this.widgetWidth,
     required this.leftTableWidth,
     required this.rightTableWidth,
+    required this.centerColumnWidth,
     required this.leftTableColumnCount,
     required this.rightTableColumnCount,
     required this.tableRowCount,
@@ -79,25 +81,36 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
   }
 
   void _initHorizontalScrollHeaderControllers() {
-    _horizontalLeftHeaderScollController =
-        widget.horizontalLinkedScroll.addAndGet();
-    _horizontalRightHeaderScollController =
-        widget.horizontalLinkedScroll.addAndGet();
+    bool hasHeader = widget.leftTableHeaderBuilder != null &&
+        widget.centerTableHeaderBuilder != null &&
+        widget.rightTableHeaderBuilder != null;
+    if (hasHeader) {
+      _horizontalLeftHeaderScollController =
+          widget.horizontalLinkedScroll.addAndGet();
+      _horizontalRightHeaderScollController =
+          widget.horizontalLinkedScroll.addAndGet();
+    }
   }
 
   void _initHorizontalScrollFooterControllers() {
-    _horizontalLeftHeaderScollController =
-        widget.horizontalLinkedScroll.addAndGet();
-    _horizontalRightHeaderScollController =
-        widget.horizontalLinkedScroll.addAndGet();
+    bool hasFooter = widget.leftTableFooterBuilder != null &&
+        widget.centerTableFooterBuilder != null &&
+        widget.rightTableFooterBuilder != null;
+    if (hasFooter) {
+      _horizontalLeftFooterScollController =
+          widget.horizontalLinkedScroll.addAndGet();
+      _horizontalRightFooterScollController =
+          widget.horizontalLinkedScroll.addAndGet();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    double sideTableWidth = (widget.widgetWidth - widget.centerColumnWidth) / 2;
+
     return CustomMultiChildLayout(
       delegate: TableHeaderFooterLayoutDelegate(
-        leftTableWidth: widget.leftTableWidth,
-        rightTableWidth: widget.rightTableWidth,
+        centerColumnWidth: widget.centerColumnWidth,
         widgetWidth: widget.widgetWidth,
         widgetHeight: widget.widgetHeight,
       ),
@@ -107,8 +120,10 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
           child: BaseChainTable(
             verticalLinkedScroll: widget.verticalLinkedScroll,
             horizontalLinkedScroll: widget.horizontalLinkedScroll,
+            widgetWidth: widget.widgetWidth,
             leftTableWidth: widget.leftTableWidth,
             rightTableWidth: widget.rightTableWidth,
+            centerColumnWidth: widget.centerColumnWidth,
             leftTableColumnCount: widget.leftTableColumnCount,
             rightTableColumnCount: widget.rightTableColumnCount,
             leftBuilder: widget.leftBuilder,
@@ -120,73 +135,97 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
         if (widget.leftTableHeaderBuilder != null)
           LayoutId(
             id: TableComponents.leftHeader,
-            child: ListView.builder(
-              controller: _horizontalLeftHeaderScollController,
-              reverse: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.leftTableHeaderColumnCount,
-              itemBuilder: (context, index) {
-                return widget.leftTableHeaderBuilder?.call(context, index);
-              },
+            child: SizedBox(
+              width: sideTableWidth,
+              child: SingleChildScrollView(
+                reverse: true,
+                controller: _horizontalLeftHeaderScollController,
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children:
+                      List.generate(widget.leftTableHeaderColumnCount, (index) {
+                    return widget.leftTableHeaderBuilder!.call(context, index);
+                  }),
+                ),
+              ),
             ),
           ),
         if (widget.centerTableHeaderBuilder != null)
           LayoutId(
             id: TableComponents.centerHeader,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.centerTableHeaderColumnCount,
-              itemBuilder: (context, index) {
-                return widget.centerTableHeaderBuilder?.call(context, index);
-              },
+            child: SizedBox(
+              width: widget.centerColumnWidth,
+              child: Row(
+                children:
+                    List.generate(widget.centerTableHeaderColumnCount, (index) {
+                  return widget.centerTableHeaderBuilder!.call(context, index);
+                }),
+              ),
             ),
           ),
         if (widget.rightTableHeaderBuilder != null)
           LayoutId(
             id: TableComponents.rightHeader,
-            child: ListView.builder(
-              controller: _horizontalRightHeaderScollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.rightTableHeaderColumnCount,
-              itemBuilder: (context, index) {
-                return widget.rightTableHeaderBuilder?.call(context, index);
-              },
+            child: SizedBox(
+              width: sideTableWidth,
+              child: SingleChildScrollView(
+                controller: _horizontalRightHeaderScollController,
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(widget.rightTableHeaderColumnCount,
+                      (index) {
+                    return widget.rightTableHeaderBuilder!.call(context, index);
+                  }),
+                ),
+              ),
             ),
           ),
         if (widget.leftTableFooterBuilder != null)
           LayoutId(
             id: TableComponents.leftFooter,
-            child: ListView.builder(
-              controller: _horizontalLeftFooterScollController,
-              reverse: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.leftTableFooterColumnCount,
-              itemBuilder: (context, index) {
-                return widget.leftTableFooterBuilder?.call(context, index);
-              },
+            child: SizedBox(
+              width: sideTableWidth,
+              child: SingleChildScrollView(
+                controller: _horizontalLeftFooterScollController,
+                reverse: true,
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children:
+                      List.generate(widget.leftTableFooterColumnCount, (index) {
+                    return widget.leftTableFooterBuilder!.call(context, index);
+                  }),
+                ),
+              ),
             ),
           ),
         if (widget.centerTableFooterBuilder != null)
           LayoutId(
             id: TableComponents.centerFooter,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.centerTableFooterColumnCount,
-              itemBuilder: (context, index) {
-                return widget.centerTableFooterBuilder?.call(context, index);
-              },
+            child: SizedBox(
+              width: widget.centerColumnWidth,
+              child: Row(
+                children:
+                    List.generate(widget.centerTableFooterColumnCount, (index) {
+                  return widget.centerTableFooterBuilder!.call(context, index);
+                }),
+              ),
             ),
           ),
         if (widget.rightTableFooterBuilder != null)
           LayoutId(
             id: TableComponents.rightFooter,
-            child: ListView.builder(
-              controller: _horizontalRightFooterScollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.rightTableFooterColumnCount,
-              itemBuilder: (context, index) {
-                return widget.rightTableFooterBuilder?.call(context, index);
-              },
+            child: SizedBox(
+              width: sideTableWidth,
+              child: SingleChildScrollView(
+                controller: _horizontalRightFooterScollController,
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(widget.rightTableFooterColumnCount,
+                      (index) {
+                    return widget.rightTableFooterBuilder!.call(context, index);
+                  }),
+                ),
+              ),
             ),
           ),
       ],
@@ -196,17 +235,19 @@ class _HeaderFooterChainTableState extends State<HeaderFooterChainTable> {
 
 class TableHeaderFooterLayoutDelegate extends MultiChildLayoutDelegate {
   final double widgetWidth, widgetHeight;
-  final double leftTableWidth, rightTableWidth;
+  final double centerColumnWidth;
 
   TableHeaderFooterLayoutDelegate({
-    required this.leftTableWidth,
-    required this.rightTableWidth,
+    required this.centerColumnWidth,
     required this.widgetWidth,
     required this.widgetHeight,
   });
 
   @override
   void performLayout(Size size) {
+    double leftTableWidth = (widgetWidth - centerColumnWidth) / 2;
+    double rightTableWidth = (widgetWidth - centerColumnWidth) / 2;
+
     Size leftHeaderSize = Size.zero,
         centerHeaderSize = Size.zero,
         rightHeaderSize = Size.zero,
@@ -222,10 +263,8 @@ class TableHeaderFooterLayoutDelegate extends MultiChildLayoutDelegate {
     if (hasHeader) {
       leftHeaderSize = layoutChild(TableComponents.leftHeader,
           BoxConstraints.tightFor(width: leftTableWidth));
-      centerHeaderSize = layoutChild(
-          TableComponents.centerHeader,
-          BoxConstraints.tightFor(
-              width: widgetWidth - leftTableWidth - rightTableWidth));
+      centerHeaderSize = layoutChild(TableComponents.centerHeader,
+          BoxConstraints.tightFor(width: centerColumnWidth));
       rightHeaderSize = layoutChild(TableComponents.rightHeader,
           BoxConstraints.tightFor(width: rightTableWidth));
 
@@ -241,10 +280,8 @@ class TableHeaderFooterLayoutDelegate extends MultiChildLayoutDelegate {
     if (hasFooter) {
       leftFooterSize = layoutChild(TableComponents.leftFooter,
           BoxConstraints.tightFor(width: leftTableWidth));
-      centerFooterSize = layoutChild(
-          TableComponents.centerFooter,
-          BoxConstraints.tightFor(
-              width: widgetWidth - leftTableWidth - rightTableWidth));
+      centerFooterSize = layoutChild(TableComponents.centerFooter,
+          BoxConstraints.tightFor(width: centerColumnWidth));
       rightFooterSize = layoutChild(TableComponents.rightFooter,
           BoxConstraints.tightFor(width: rightTableWidth));
       assert(
@@ -262,7 +299,7 @@ class TableHeaderFooterLayoutDelegate extends MultiChildLayoutDelegate {
       assert(bodyHeight >= 0, "Table body should not be smaller than zero.");
 
       bodySize = layoutChild(
-        TableComponents.rightHeader,
+        TableComponents.body,
         BoxConstraints.tightFor(
           width: widgetWidth,
           height: bodyHeight,
@@ -280,11 +317,11 @@ class TableHeaderFooterLayoutDelegate extends MultiChildLayoutDelegate {
       positionChild(TableComponents.body, Offset(0, leftHeaderSize.height));
     }
     if (hasFooter) {
-      double footerOffsetY = widgetHeight - leftFooterSize.height;
+      double footerOffsetY = leftHeaderSize.height + bodySize.height;
       positionChild(TableComponents.leftFooter, Offset(0, footerOffsetY));
       positionChild(
           TableComponents.centerFooter, Offset(leftTableWidth, footerOffsetY));
-      positionChild(TableComponents.rightHeader,
+      positionChild(TableComponents.rightFooter,
           Offset(widgetWidth - rightTableWidth, footerOffsetY));
     }
   }
@@ -292,8 +329,7 @@ class TableHeaderFooterLayoutDelegate extends MultiChildLayoutDelegate {
   @override
   bool shouldRelayout(covariant MultiChildLayoutDelegate oldDelegate) {
     if (oldDelegate is TableHeaderFooterLayoutDelegate) {
-      return leftTableWidth != oldDelegate.leftTableWidth ||
-          rightTableWidth != oldDelegate.rightTableWidth ||
+      return centerColumnWidth != oldDelegate.centerColumnWidth ||
           widgetHeight != oldDelegate.widgetHeight ||
           widgetWidth != oldDelegate.widgetWidth;
     }
