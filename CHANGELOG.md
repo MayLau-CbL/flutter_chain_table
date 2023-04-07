@@ -1,3 +1,2 @@
-## 0.0.1
-
-* TODO: Describe initial release.
+## [1.0.0] - 20230407
+* Init version
